@@ -2,7 +2,6 @@
 const { app, BrowserWindow } = require("electron");
 
 const { spawn } = require('child_process');
-const path = require("path");
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -11,14 +10,15 @@ const createWindow = () => {
     center : true
   });
   win.loadFile("index.html");
-  const pyPath = path.join(__dirname, 'python_scripts', 'test.py');
-  const pythonProcess = spawn("python", [pyPath]);
-  /* console.log(pyPath);
-  console.log(pythonProcess);
-  pythonProcess.stdout.on("data", (data) => {
-    console.log(`${data}`);
-    
-  }) */
+  // python file 실행
+  const result = spawn('python', ['test.py'])
+  result.stdout.on('data', function (data) {
+    console.log(data.toString());
+  });
+  result.stderr.on('data', function (data) {
+    console.log(data.toString());
+  });
+
 };
 
 app.whenReady().then(() => {

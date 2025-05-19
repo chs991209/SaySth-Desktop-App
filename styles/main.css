@@ -4,7 +4,7 @@
   align-items: center;
   width: 50%;
   position: fixed;
-  bottom: 10px;
+  bottom: 0;
   background-color: gray;
   border-radius: 5px;
   padding: 25px 15px;
@@ -31,6 +31,7 @@
   border: none;
   font-size: 1rem;
   margin: 0 1rem;
+  background: whitesmoke;
 }
 
 .mic-icon {
@@ -71,7 +72,29 @@
   margin: 10px 0 0 0;
   width: 100%;
   color: pink;
-  opacity: 0;
+  opacity: 1;
+  margin-left: 55px;
+}
+
+.progress_container{
+  width: 100%;
+  margin-bottom: 10px;
+  opacity: 1;
+  margin-left: 55px;
+}
+
+.progress {
+  width: 100.8px;
+  height: 16.8px;
+  -webkit-mask: radial-gradient(circle closest-side,#8789ff 94%,#0000) left/20% 100%;
+  background: linear-gradient(#8789ff 0 0) left/0% 100% no-repeat #dbdcef;
+  animation: progress-c3ir73 2s infinite steps(6);
+}
+
+@keyframes progress-c3ir73 {
+  100% {
+     background-size: 120% 100%;
+  }
 }
 
 /* 3) 무지개색 keyframes */
@@ -111,4 +134,40 @@
   }
 
   /* back to red */
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 20px 10px;
+  }
+
+  .user_input {
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+  }
+
+  .mic-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding: 15px 5px;
+  }
+
+  .user_input {
+    font-size: 0.8rem;
+    margin: 0 0.25rem;
+  }
+
+  .mic-icon {
+    width: 25px;
+    height: 25px;
+    margin: 0 0.25rem;
+  }
 }
