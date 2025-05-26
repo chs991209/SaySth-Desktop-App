@@ -11,13 +11,13 @@ const createWindow = () => {
   });
   win.loadFile("index.html");
   // python file 실행
-  const result = spawn('python', ['test.py'])
+  /* const result = spawn('python', ['test.py'])
   result.stdout.on('data', function (data) {
     console.log(data.toString());
   });
   result.stderr.on('data', function (data) {
     console.log(data.toString());
-  });
+  }); */
 
 };
 
