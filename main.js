@@ -1,24 +1,21 @@
 /* Server Side */
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
+const { execFile } = require('child_process');
+const path = require('path');
+const fs = require('fs');
 
-const { spawn } = require('child_process');
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
-    center : true
+    height: 800,
+    center : true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   });
   win.loadFile("index.html");
-  // python file 실행
-  const result = spawn('python', ['test.py'])
-  result.stdout.on('data', function (data) {
-    console.log(data.toString());
-  });
-  result.stderr.on('data', function (data) {
-    console.log(data.toString());
-  });
-
 };
 
 app.whenReady().then(() => {

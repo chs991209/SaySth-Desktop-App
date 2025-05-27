@@ -8,9 +8,8 @@ let mediaRecoder;
 
 const AudioType = 'audio/wav';
 
-const TEXTPOSTURL = `https://526b-59-1-100-185.ngrok-free.app/receive-text`;
-const AUDIOPOSTURL = ``;
-
+const TEXTPOSTURL = `https://192.168.0.189:8000/execute`;
+const AUDIOPOSTURL = `https://481b-39-122-179-149.ngrok-free.app/stt_base64`;
 /* 
 사용자 입력
 */
@@ -24,23 +23,21 @@ user_input.addEventListener("keydown", async function (e) {
         headers: {
           "Content-Type": "application/json"   // JSON임을 명시
         },
-        body: JSON.stringify({"text": userMessage })
+        body: JSON.stringify({"prompt": userMessage })
       });
-      console.log(JSON.stringify({"text": userMessage }));
+      console.log(JSON.stringify({"prompt": userMessage }));
       
       const data = await res.json();
-      console.log(`Response : ${data}`);
+      console.log(data.code);
       user_input.value = "";
+      // 파이썬 코드 실행
+      run(data.code);
+      
     } catch(e){
       console.error(`${e}`);
     }
   }
 });
-
-async function urlToblob(audioUrl) {
-  const res = await fetch(audioUrl);
-  return await res.blob();
-}
 
 async function startRecording() {
   micIcon.innerHTML = `<i class="fa-solid fa-bars-staggered"></i>`;
@@ -54,38 +51,59 @@ async function startRecording() {
       audioChunk.push(event.data);
     };
 
-    mediaRecoder.onstop = function () {
-      const audioblob = new Blob(audioChunk, { type: AudioType });
-      audioChunk = []; // 청크 초기화
+    mediaRecoder.onstop = async function () {
+      const audioBlob = new Blob(audioChunk, { type: AudioType });
+      console.log('Blob 준비:', audioBlob);
+
+      // FileReader로 Base64 인코딩
       const reader = new FileReader();
-      const audioURL = URL.createObjectURL(audioblob);
-      reader.readAsDataURL(audioblob);
-      console.log(audioURL);
-
-      const blob = urlToblob(audioURL);
-
-      const wavFile = new File([blob], 'voice_file.wav', {type : AudioType});
-
-      const formData = new FormData();
-      formData.append('file', wavFile);
-      console.log(wavFile);
-      /* for debug */
-      /* let entries = formData.entries();
-      for (const pair of entries) {
-          console.log(pair[0]+ ', ' + pair[1]); 
-      } */
-      
-      // post to FastAPI
-      
-      reader.onload = function () {
-        const base64audio = reader.result;
-        localStorage.setItem("recorded file", base64audio);
+      reader.onloadend = async () => {
+        // Data URL 전체에서 Base64 부분만 추출
+        const base64Data = reader.result.split(',')[1];
+        // JSON payload 생성
+        const payload = {
+          fileName: 'voice_file.wav',
+          mimeType: AudioType,
+          data: base64Data
+        };
+        console.log(payload);
+        
+        try {
+          console.log('JSON 업로드 시작');
+          const response = await fetch(AUDIOPOSTURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
+          const result = await response.json();
+          console.log('업로드 성공:', result);
+          
+          
+        } catch (err) {
+          console.error('업로드 실패:', err);
+        }
       };
+      reader.readAsDataURL(audioBlob);
+      // 파이썬 코드 실행
+      //run();
     };
     onRecording = true;
     mediaRecoder.start();
   } catch (e) {
     console.log(`마이크 접근 오류 ${e}`);
+  }
+}
+
+async function run(code){
+  try{
+    console.log(code);    
+    //const pycode = "import webbrowser\nvideoID = 'ZgpI7e5Rpns'\nurl = 'https://www.youtube.com/watch?v=' + videoID\nwebbrowser.open(url)";
+    const result = await runPythonCode(code);
+    console.log(result);
+    
+  } catch(e){
+    console.error(`${e}`);
   }
 }
 
@@ -108,17 +126,3 @@ micIcon.addEventListener("click", (e) => {
     stopRecording();
   }
 });
-
-/*
-playBtn.addEventListener("click", () => {
-  const storedAudio = localStorage.getItem("recorded file");
-
-  if (storedAudio) {
-    const source = document.getElementById("audioSource");
-    source.src = storedAudio;
-    audioPlayer.play();
-  } else {
-    console.error(`음성 파일 없음`);
-  }
-});
-*/
