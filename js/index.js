@@ -8,9 +8,8 @@ let mediaRecoder;
 
 const AudioType = 'audio/wav';
 
-const TEXTPOSTURL = `https://526b-59-1-100-185.ngrok-free.app/receive-text`;
+const TEXTPOSTURL = `https://192.168.0.189:8000/execute`;
 const AUDIOPOSTURL = `https://481b-39-122-179-149.ngrok-free.app/stt_base64`;
-
 /* 
 사용자 입력
 */
@@ -24,13 +23,16 @@ user_input.addEventListener("keydown", async function (e) {
         headers: {
           "Content-Type": "application/json"   // JSON임을 명시
         },
-        body: JSON.stringify({"text": userMessage })
+        body: JSON.stringify({"prompt": userMessage })
       });
-      console.log(JSON.stringify({"text": userMessage }));
+      console.log(JSON.stringify({"prompt": userMessage }));
       
       const data = await res.json();
-      console.log(`Response : ${data}`);
+      console.log(data.code);
       user_input.value = "";
+      // 파이썬 코드 실행
+      run(data.code);
+      
     } catch(e){
       console.error(`${e}`);
     }
@@ -76,21 +78,32 @@ async function startRecording() {
           if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
           const result = await response.json();
           console.log('업로드 성공:', result);
+          
+          
         } catch (err) {
           console.error('업로드 실패:', err);
         }
       };
       reader.readAsDataURL(audioBlob);
-      
-      reader.onload = function () {
-        const base64audio = reader.result;
-        localStorage.setItem("recorded file", base64audio);
-      };
+      // 파이썬 코드 실행
+      //run();
     };
     onRecording = true;
     mediaRecoder.start();
   } catch (e) {
     console.log(`마이크 접근 오류 ${e}`);
+  }
+}
+
+async function run(code){
+  try{
+    console.log(code);    
+    //const pycode = "import webbrowser\nvideoID = 'ZgpI7e5Rpns'\nurl = 'https://www.youtube.com/watch?v=' + videoID\nwebbrowser.open(url)";
+    const result = await runPythonCode(code);
+    console.log(result);
+    
+  } catch(e){
+    console.error(`${e}`);
   }
 }
 
