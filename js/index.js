@@ -6,7 +6,7 @@ let onRecording = false;
 let audioChunk = [];
 let mediaRecoder;
 
-const AudioType = 'audio/wav';
+const AudioType = "audio/wav";
 
 const TEXTPOSTURL = `https://192.168.0.189:8000/execute`;
 const AUDIOPOSTURL = `https://481b-39-122-179-149.ngrok-free.app/stt_base64`;
@@ -17,23 +17,22 @@ user_input.addEventListener("keydown", async function (e) {
   if (e.key == "Enter" && user_input.value.trim() !== "") {
     const userMessage = user_input.value.trim();
     console.log(userMessage);
-    try{
+    try {
       const res = await fetch(TEXTPOSTURL, {
-        method : 'POST',
+        method: "POST",
         headers: {
-          "Content-Type": "application/json"   // JSON임을 명시
+          "Content-Type": "application/json", // JSON임을 명시
         },
-        body: JSON.stringify({"prompt": userMessage })
+        body: JSON.stringify({ prompt: userMessage }),
       });
-      console.log(JSON.stringify({"prompt": userMessage }));
-      
+      console.log(JSON.stringify({ prompt: userMessage }));
+
       const data = await res.json();
       console.log(data.code);
       user_input.value = "";
       // 파이썬 코드 실행
       run(data.code);
-      
-    } catch(e){
+    } catch (e) {
       console.error(`${e}`);
     }
   }
@@ -41,7 +40,7 @@ user_input.addEventListener("keydown", async function (e) {
 
 async function startRecording() {
   micIcon.innerHTML = `<i class="fa-solid fa-bars-staggered"></i>`;
-  micIcon.classList.add('rainbow');
+  micIcon.classList.add("rainbow");
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecoder = new MediaRecorder(stream);
@@ -53,40 +52,38 @@ async function startRecording() {
 
     mediaRecoder.onstop = async function () {
       const audioBlob = new Blob(audioChunk, { type: AudioType });
-      console.log('Blob 준비:', audioBlob);
+      console.log("Blob 준비:", audioBlob);
 
       // FileReader로 Base64 인코딩
       const reader = new FileReader();
       reader.onloadend = async () => {
         // Data URL 전체에서 Base64 부분만 추출
-        const base64Data = reader.result.split(',')[1];
+        const base64Data = reader.result.split(",")[1];
         // JSON payload 생성
         const payload = {
-          fileName: 'voice_file.wav',
+          fileName: "voice_file.wav",
           mimeType: AudioType,
-          data: base64Data
+          data: base64Data,
         };
         console.log(payload);
-        
+
         try {
-          console.log('JSON 업로드 시작');
+          console.log("JSON 업로드 시작");
           const response = await fetch(AUDIOPOSTURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
           });
           if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
           const result = await response.json();
-          console.log('업로드 성공:', result);
-          
-          
+          console.log("반환값:", result.text);
+          // 파이썬 코드 실행
+          sendTextToAgent(result.text);
         } catch (err) {
-          console.error('업로드 실패:', err);
+          console.error("업로드 실패:", err);
         }
       };
       reader.readAsDataURL(audioBlob);
-      // 파이썬 코드 실행
-      //run();
     };
     onRecording = true;
     mediaRecoder.start();
@@ -95,14 +92,30 @@ async function startRecording() {
   }
 }
 
-async function run(code){
-  try{
-    console.log(code);    
-    //const pycode = "import webbrowser\nvideoID = 'ZgpI7e5Rpns'\nurl = 'https://www.youtube.com/watch?v=' + videoID\nwebbrowser.open(url)";
+async function run(code) {
+  try {
+    console.log(code);
     const result = await runPythonCode(code);
     console.log(result);
-    
-  } catch(e){
+  } catch (e) {
+    console.error(`${e}`);
+  }
+}
+
+async function sendTextToAgent(text) {
+  try {
+    const res = await fetch(TEXTPOSTURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // JSON임을 명시
+      },
+      body: JSON.stringify({ prompt: text }),
+    });
+    console.log(JSON.stringify({ prompt: text }));
+
+    const data = await res.json();
+    console.log(data.code);
+  } catch (e) {
     console.error(`${e}`);
   }
 }
@@ -110,8 +123,8 @@ async function run(code){
 function stopRecording() {
   /* 녹음 중 일 때 */
   mediaRecoder.stop();
-  onRecording = false;  
-  micIcon.classList.remove('rainbow');
+  onRecording = false;
+  micIcon.classList.remove("rainbow");
   micIcon.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
 }
 
@@ -122,7 +135,7 @@ micIcon.addEventListener("click", (e) => {
   // 마이크 버튼을 처음 눌렀을 시
   if (onRecording === false) {
     startRecording();
-  } else{    
+  } else {
     stopRecording();
   }
 });
