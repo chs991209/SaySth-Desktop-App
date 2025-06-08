@@ -1,6 +1,11 @@
 /* Client Side */
 const user_input = document.querySelector(".user_input");
 const micIcon = document.querySelector(".mic-icon");
+const processBar = document.querySelector(".progress_bar");
+const favList = document.getElementById("favorite_list");
+const favorite_list_container = document.querySelector(
+  ".favorite_list_container"
+);
 
 let onRecording = false;
 let audioChunk = [];
@@ -8,16 +13,16 @@ let mediaRecoder;
 
 const AudioType = "audio/wav";
 
-const TEXTPOSTURL = `https://192.168.0.189:8000/execute`;
-const AUDIOPOSTURL = `https://481b-39-122-179-149.ngrok-free.app/stt_base64`;
+const TEXTPOSTURL = `https://f7bf-59-1-100-185.ngrok-free.app/execute`;
+const AUDIOPOSTURL = `https://b728-39-122-179-149.ngrok-free.app/stt_base64`;
 /* 
 사용자 입력
 */
 user_input.addEventListener("keydown", async function (e) {
   if (e.key == "Enter" && user_input.value.trim() !== "") {
     const userMessage = user_input.value.trim();
-    console.log(userMessage);
     try {
+      processBar.classList.add("progress");
       const res = await fetch(TEXTPOSTURL, {
         method: "POST",
         headers: {
@@ -25,10 +30,8 @@ user_input.addEventListener("keydown", async function (e) {
         },
         body: JSON.stringify({ prompt: userMessage }),
       });
-      console.log(JSON.stringify({ prompt: userMessage }));
 
       const data = await res.json();
-      console.log(data.code);
       user_input.value = "";
       // 파이썬 코드 실행
       run(data.code);
@@ -51,8 +54,8 @@ async function startRecording() {
     };
 
     mediaRecoder.onstop = async function () {
+      processBar.classList.add("progress");
       const audioBlob = new Blob(audioChunk, { type: AudioType });
-      console.log("Blob 준비:", audioBlob);
 
       // FileReader로 Base64 인코딩
       const reader = new FileReader();
@@ -65,7 +68,6 @@ async function startRecording() {
           mimeType: AudioType,
           data: base64Data,
         };
-        console.log(payload);
 
         try {
           console.log("JSON 업로드 시작");
@@ -76,7 +78,7 @@ async function startRecording() {
           });
           if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
           const result = await response.json();
-          console.log("반환값:", result.text);
+          //console.log("반환값:", result.text);
           // 파이썬 코드 실행
           sendTextToAgent(result.text);
         } catch (err) {
@@ -94,9 +96,8 @@ async function startRecording() {
 
 async function run(code) {
   try {
-    console.log(code);
     const result = await runPythonCode(code);
-    console.log(result);
+    processBar.classList.remove("progress");
   } catch (e) {
     console.error(`${e}`);
   }
@@ -111,10 +112,9 @@ async function sendTextToAgent(text) {
       },
       body: JSON.stringify({ prompt: text }),
     });
-    console.log(JSON.stringify({ prompt: text }));
 
     const data = await res.json();
-    console.log(data.code);
+    run(data.code);
   } catch (e) {
     console.error(`${e}`);
   }

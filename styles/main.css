@@ -4,8 +4,8 @@
   align-items: center;
   width: 50%;
   position: fixed;
-  bottom: 0;
-  background-color: gray;
+  bottom: 1%;
+  background-color: #343a40;
   border-radius: 5px;
   padding: 25px 15px;
   left: 50%;
@@ -19,25 +19,29 @@
   border-radius: 3rem;
   padding: 0.5rem 0rem;
   width: 100%;
-  background-color: whitesmoke;
+  background-color: #495057;
 }
 
 .user_input {
   flex: 1;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #495057;
   outline: none;
   flex: 1;
   border: none;
   font-size: 1rem;
   margin: 0 1rem;
-  background: whitesmoke;
+  color: #f8f9fa;
+  background: #495057;
+}
+
+input::placeholder{
+  color: #f8f9fa;
 }
 
 .mic-icon {
   width: 40px;
   height: 40px;
-  /* background-color: #000; */
   color: #fff;
   cursor: pointer;
   /* 눌러도 브라우저 기본 효과 제거 */
@@ -53,7 +57,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: border-color 0.3s ease;
-  background-color: deepskyblue;
+  background-color: #495057;
 }
 
 /* 아이콘 크기와 색상 설정 */
