@@ -1,20 +1,20 @@
 /* Server Side */
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { execFile } = require('child_process');
-const path = require('path');
-const fs = require('fs');
-
+const { execFile } = require("child_process");
+const path = require("path");
+const fs = require("fs");
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 800,
-    center : true,
+    center: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
-    }
+      contextIsolation: false,
+    },
   });
+  //win.loadFile("https://localhost:3000");
   win.loadFile("index.html");
 };
 
