@@ -1,0 +1,177 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  position: fixed;
+  bottom: 1%;
+  background-color: #343a40;
+  border-radius: 5px;
+  padding: 25px 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 50;
+}
+
+.input_group {
+  display: flex;
+  align-items: center;
+  border-radius: 3rem;
+  padding: 0.5rem 0rem;
+  width: 100%;
+  background-color: #495057;
+}
+
+.user_input {
+  flex: 1;
+  font-size: 16px;
+  border: 1px solid #495057;
+  outline: none;
+  flex: 1;
+  border: none;
+  font-size: 1rem;
+  margin: 0 1rem;
+  color: #f8f9fa;
+  background: #495057;
+}
+
+input::placeholder{
+  color: #f8f9fa;
+}
+
+.mic-icon {
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  cursor: pointer;
+  /* 눌러도 브라우저 기본 효과 제거 */
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 4px solid transparent;
+  margin: 0 1rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: #495057;
+}
+
+/* 아이콘 크기와 색상 설정 */
+.mic-icon .fa-solid {
+  font-size: 24px;
+  color: whitesmoke;
+}
+
+/* 2) 클릭(눌림) 상태에서 무지개 애니메이션 */
+.mic-icon.rainbow {
+  animation: rainbow-border 2s linear infinite;
+}
+
+.waiting {
+  justify-content: flex-start;
+  margin: 10px 0 0 0;
+  width: 100%;
+  color: pink;
+  opacity: 1;
+  margin-left: 55px;
+}
+
+.progress_container{
+  width: 100%;
+  margin-bottom: 10px;
+  opacity: 1;
+  margin-left: 55px;
+}
+
+.progress {
+  width: 100.8px;
+  height: 16.8px;
+  -webkit-mask: radial-gradient(circle closest-side,#8789ff 94%,#0000) left/20% 100%;
+  background: linear-gradient(#8789ff 0 0) left/0% 100% no-repeat #dbdcef;
+  animation: progress-c3ir73 2s infinite steps(6);
+}
+
+@keyframes progress-c3ir73 {
+  100% {
+     background-size: 120% 100%;
+  }
+}
+
+/* 3) 무지개색 keyframes */
+@keyframes rainbow-border {
+  0% {
+    border-color: #e6194b;
+  }
+
+  /* red */
+  16% {
+    border-color: #f58231;
+  }
+
+  /* orange */
+  32% {
+    border-color: #ffe119;
+  }
+
+  /* yellow */
+  48% {
+    border-color: #3cb44b;
+  }
+
+  /* green */
+  64% {
+    border-color: #4363d8;
+  }
+
+  /* blue */
+  80% {
+    border-color: #911eb4;
+  }
+
+  /* purple */
+  100% {
+    border-color: #e6194b;
+  }
+
+  /* back to red */
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 20px 10px;
+  }
+
+  .user_input {
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+  }
+
+  .mic-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding: 15px 5px;
+  }
+
+  .user_input {
+    font-size: 0.8rem;
+    margin: 0 0.25rem;
+  }
+
+  .mic-icon {
+    width: 25px;
+    height: 25px;
+    margin: 0 0.25rem;
+  }
+}
