@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const EXTERNAL_URL = "https://c617-59-1-100-185.ngrok-free.app/execute";
+const EXTERNAL_URL = "https://5735-59-1-100-185.ngrok-free.app/execute";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

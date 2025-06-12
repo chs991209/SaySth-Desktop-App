@@ -1,0 +1,34 @@
+{
+  "name": "saysth-desktop-app",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "repository": "https://github.com/InwooLeeme/SaySth-Desktop-App.git",
+  "author": "ItsmeLee",
+  "license": "MIT",
+  "scripts": {
+    "dev:next": "cd renderer && npm run dev",
+    "dev:mcp": "python -m uvicorn mcp_server.main:app --reload --host 127.0.0.1 --port 8001",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "dev": "npm run dev:electron",
+    "build:next": "cd renderer && npm run build && npm run export -o out",
+    "build:electron": "tsc -p tsconfig.json",
+    "build": "npm run build:next && npm run build:electron",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "saysth-desktop-app": "file:",
+    "SaySth-Desktop-App": "file:"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "@types/wait-on": "^5.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^35.5.1",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^3.0.1",
+    "tree-kill": "^1.2.2",
+    "typescript": "^5.8.3",
+    "wait-on": "^8.0.3"
+  }
+}
