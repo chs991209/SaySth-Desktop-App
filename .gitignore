@@ -665,8 +665,6 @@ dmypy.json
 cython_debug/
 
 # Package
-package.json
-package-lock.json
 
 # test python script
 test.py
