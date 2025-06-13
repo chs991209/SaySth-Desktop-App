@@ -1,0 +1,23 @@
+.progress_container{
+  width: 100%;
+  opacity: 1;
+}
+
+.progress_bar{
+    min-height : 20px;
+    margin-left: 20px;
+}
+
+.progress {
+  width: 100.8px;
+  height: 10px;
+  -webkit-mask: radial-gradient(circle closest-side,#8789ff 94%,#0000) left/20% 100%;
+  background: linear-gradient(#6264a7 0 0) left/0% 100% no-repeat #dbdcef;
+  animation: progress-c3ir73 2s infinite steps(6);
+}
+
+@keyframes progress-c3ir73 {
+  100% {
+     background-size: 120% 100%;
+  }
+}

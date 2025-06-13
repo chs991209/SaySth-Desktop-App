@@ -79,7 +79,7 @@ async function createWindow() {
 
     // Next.js dev 서버 준비될 때까지 대기 (최대 5초)
     try {
-      await waitOn({ resources: ["http://localhost:8000"], timeout: 5000 });
+      await waitOn({ resources: ["http://localhost:8000"], timeout: 2000 });
       console.log("Next.js dev 서버가 준비되었습니다.");
     } catch (err) {
       console.error("wait-on: Next.js dev 서버 대기 실패:", err);
@@ -100,6 +100,8 @@ async function createWindow() {
 
   if (isDev) {
     mainWindow.loadURL("http://localhost:8000/");
+    //const indexHtml = path.join(__dirname, "../renderer/out/index.html");
+    //mainWindow.loadFile(indexHtml);
   } else {
     const indexHtml = path.join(__dirname, "../renderer/out/index.html");
     mainWindow.loadFile(indexHtml);

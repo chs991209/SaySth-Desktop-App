@@ -1,14 +1,9 @@
+"use client";
+import styles from "./UserInput.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useProcess } from "../../../context/process";
-
-interface UserInputProps {
-  classNames?: {
-    input?: string;
-    micIcon?: string;
-  };
-}
 
 const AudioType = "audio/wav";
 const TEXTPOSTURL = "/api/execute";
@@ -22,13 +17,15 @@ declare global {
   }
 }
 
-export default function UserInput({ classNames = {} }: UserInputProps) {
+export default function UserInput() {
   const [inputValue, setInputValue] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const { isProcessing, setIsProcessing } = useProcess();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-
+  useEffect(() => {
+    console.log("isRecording changed:", isRecording);
+  }, [isRecording]);
   const runCode = async (code: string) => {
     try {
       await window.electronAPI.runPythonCode(code);
@@ -122,7 +119,6 @@ export default function UserInput({ classNames = {} }: UserInputProps) {
       };
 
       recorder.start();
-      setIsRecording(true);
     } catch (err) {
       console.error("Microphone access error:", err);
     }
@@ -133,8 +129,15 @@ export default function UserInput({ classNames = {} }: UserInputProps) {
     setIsRecording(false);
   };
 
-  const handleMicClick = () =>
-    isRecording ? stopRecording() : startRecording();
+  function handleMicClick() {
+    const next = !isRecording;
+    setIsRecording(next);
+    if (next) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }
 
   return (
     <>
@@ -142,18 +145,15 @@ export default function UserInput({ classNames = {} }: UserInputProps) {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        className={classNames.input}
+        className={styles.userInput}
         placeholder="명령을 입력하세요"
         disabled={isRecording} // 녹음 중엔 입력 비활성화
       />
       <div
         onClick={handleMicClick}
-        className={classNames.micIcon + (isRecording ? " rainbow" : "")}
+        className={`${styles.micIcon} ${isRecording ? styles.rainbow : ""}`}
       >
-        <FontAwesomeIcon
-          icon={faMicrophone}
-          className={isRecording ? " rainbow" : ""}
-        />
+        <FontAwesomeIcon icon={faMicrophone} />
       </div>
     </>
   );
