@@ -277,7 +277,7 @@ publish/
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
-# in these scripts will be unencrypted
+# in these tsscripts will be unencrypted
 PublishScripts/
 
 # NuGet Packages
@@ -369,7 +369,7 @@ FakesAssemblies/
 # GhostDoc plugin setting file
 *.GhostDoc.xml
 
-# Node.scripts Tools for Visual Studio
+# Node.tsscripts Tools for Visual Studio
 .ntvs_analysis.dat
 node_modules/
 
