@@ -6,13 +6,11 @@
   "author": "ItsmeLee",
   "license": "MIT",
   "scripts": {
-    "dev:next": "cd renderer && npm run dev",
     "dev:mcp": "python -m uvicorn mcp_server.main:app --reload --host 127.0.0.1 --port 8001",
     "dev:electron": "cross-env NODE_ENV=development electron .",
     "dev": "npm run dev:electron",
-    "build:next": "cd renderer && npm run build && npm run export -o out",
     "build:electron": "tsc -p tsconfig.json",
-    "build": "npm run build:next && npm run build:electron",
+    "build": "npm run build:electron",
     "start": "electron ."
   },
   "dependencies": {

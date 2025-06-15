@@ -6,11 +6,11 @@ import isDev from "electron-is-dev";
 import waitOn from "wait-on";
 
 let mainWindow: BrowserWindow | null = null;
-let nextProcess: ChildProcess | null = null;
+//let nextProcess: ChildProcess | null = null;
 let mcpProcess: ChildProcess | null = null;
 
 /** Next.js 개발 서버 실행 */
-function startNextServer() {
+/* function startNextServer() {
   const rendererPath = path.join(__dirname, "../renderer");
   nextProcess = spawn("npm", ["run", "dev"], {
     cwd: rendererPath,
@@ -19,7 +19,7 @@ function startNextServer() {
     windowsHide: true,
   });
   console.log(`Next.js Server listening on: http://127.0.0.1:8000`);
-}
+} */
 
 /** MCP(FastAPI) 서버 실행 */
 function startMCPServer() {
@@ -74,20 +74,20 @@ ipcMain.handle("run-python", async (_event, code: string) =>
 /** 메인 창 생성 및 서버 준비 대기 */
 async function createWindow() {
   if (isDev) {
-    startNextServer();
+    //startNextServer();
     startMCPServer();
 
     // Next.js dev 서버 준비될 때까지 대기 (최대 5초)
-    try {
-      await waitOn({ resources: ["http://localhost:8000"], timeout: 2000 });
+    /* try {
+      //await waitOn({ resources: ["http://localhost:8000"], timeout: 2000 });
       console.log("Next.js dev 서버가 준비되었습니다.");
     } catch (err) {
       console.error("wait-on: Next.js dev 서버 대기 실패:", err);
-    }
+    } */
   }
 
   mainWindow = new BrowserWindow({
-    width: 1024,
+    width: 1280,
     height: 768,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -96,19 +96,21 @@ async function createWindow() {
     },
   });
 
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
-  if (isDev) {
-    mainWindow.loadURL("http://localhost:8000/");
+  /* if (isDev) {
+    mainWindow.loadURL("https://saysthapp.vercel.app/");
     //const indexHtml = path.join(__dirname, "../renderer/out/index.html");
     //mainWindow.loadFile(indexHtml);
   } else {
     const indexHtml = path.join(__dirname, "../renderer/out/index.html");
     mainWindow.loadFile(indexHtml);
-  }
+  } */
+
+  mainWindow.loadURL("https://saysthapp.vercel.app/");
 
   mainWindow.on("closed", () => {
-    killProcessTree(nextProcess);
+    //killProcessTree(nextProcess);
     killProcessTree(mcpProcess);
     mainWindow = null;
   });
@@ -116,7 +118,7 @@ async function createWindow() {
 
 /** 모든 창이 닫힐 때 서버도 종료하고 앱 종료 */
 app.on("window-all-closed", () => {
-  killProcessTree(nextProcess);
+  //killProcessTree(nextProcess);
   killProcessTree(mcpProcess);
   if (process.platform !== "darwin") app.quit();
 });
