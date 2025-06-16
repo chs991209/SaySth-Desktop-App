@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -43,6 +44,20 @@ def run_program(program_path: str):
         print(f"프로그램 실행 실패: {e}")
         return False
 
+# 새로 추가하는 임의 Python 코드 실행 함수 (비동기)
+def run_python_code_sync(code: str) -> str:
+    completed = subprocess.run(
+        ["python", "-c", code],
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        raise Exception(completed.stderr)
+    return completed.stdout
+
+async def run_python_code(code: str) -> str:
+    return await asyncio.to_thread(run_python_code_sync, code)
+
 @app.post("/mcp")
 async def handle_mcp_message(message: MCPMessage):
     if message.type == "run_program":
@@ -59,5 +74,17 @@ async def handle_mcp_message(message: MCPMessage):
             raise HTTPException(status_code=500, detail=f"{program_exe} 실행에 실패했습니다.")
         
         return {"status": "success", "message": f"{program_exe} 실행 완료"}
+
+    elif message.type == "run_python_code":
+        code = message.payload.get("code")
+        if not code:
+            raise HTTPException(status_code=400, detail="code is required in payload")
+        
+        try:
+            print(code)
+            result = await run_python_code(code)
+            return {"status": "success", "result": result}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Python 코드 실행 실패: {str(e)}")
     else:
         raise HTTPException(status_code=400, detail="지원하지 않는 메시지 타입입니다.")
