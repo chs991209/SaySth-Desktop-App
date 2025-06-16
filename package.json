@@ -6,7 +6,7 @@
   "author": "ItsmeLee",
   "license": "MIT",
   "scripts": {
-    "dev:mcp": "python -m uvicorn mcp_server.main:app --reload --host 127.0.0.1 --port 8001",
+    "dev:mcp": "python -m uvicorn mcp_server.main:app --reload --host 127.0.0.1 --port 8080",
     "dev:electron": "cross-env NODE_ENV=development electron .",
     "dev": "npm run dev:electron",
     "build:electron": "tsc -p tsconfig.json",
