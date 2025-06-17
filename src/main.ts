@@ -24,24 +24,26 @@ function startMCPServer(): ChildProcess {
   const pythonPath = path.join(
     __dirname,
     "..",
+    "mcp_server",
     "venv",
     "Scripts",
     "python.exe"
   ); // 가상환경 python 경로
-
+  console.log("__dirname:", __dirname);
+  console.log("Trying pythonPath:", pythonPath);
   const args = [
     "-m",
     "uvicorn",
-    "mcp_server.main:app",
+    "main:app",
     "--host",
     "127.0.0.1",
     "--port",
-    "8080",
+    "8002",
     "--reload",
   ];
 
   const mcpProcess = spawn(pythonPath, args, {
-    cwd: path.join(__dirname, ".."),
+    cwd: path.join(__dirname, "..", "mcp_server"),
     stdio: "inherit",
     windowsHide: true,
     shell: false,
@@ -80,6 +82,42 @@ ipcMain.handle("run-python", async (_event, code: string) =>
   runPythonCode(code)
 );
 
+ipcMain.on("request-from-renderer", async (event, data) => {
+  console.log("Received from renderer:", data);
+
+  // 예: FastAPI 서버에 POST 요청 보내기
+  // Node.js 내장 fetch(18 이상) 또는 axios, node-fetch 등 사용 가능
+  // 예시는 node-fetch 사용 가정
+  try {
+    // FastAPI 서버 주소
+    const fastapiUrl = "http://127.0.0.1:8002/mcp";
+
+    // node-fetch import 필요: npm install node-fetch
+    const fetch = (await import("node-fetch")).default;
+
+    const response = await fetch(fastapiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    // 렌더러로 결과 전송
+    event.sender.send("response-from-main", { success: true, data: result });
+  } catch (err) {
+    console.error("Error communicating with FastAPI:", err);
+
+    // err가 Error 타입인지 체크 후 message 사용
+    const errorMessage = err instanceof Error ? err.message : String(err);
+
+    event.sender.send("response-from-main", {
+      success: false,
+      error: errorMessage,
+    });
+  }
+});
+
 /** 메인 창 생성 및 서버 준비 대기 */
 async function createWindow() {
   /* if (isDev) {
@@ -94,6 +132,11 @@ async function createWindow() {
       } 
     } */
   startMCPServer();
+
+  // MCP 서버가 준비될 시간을 잠깐 줌 (필요에 따라 조정)
+  await new Promise((r) => setTimeout(r, 2000));
+
+  //await startNgrok(8002); // FastAPI 서버 포트
 
   mainWindow = new BrowserWindow({
     width: 1280,
