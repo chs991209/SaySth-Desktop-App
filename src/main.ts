@@ -2,8 +2,6 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { spawn, ChildProcess } from "child_process";
 import * as path from "path";
 import kill from "tree-kill";
-import isDev from "electron-is-dev";
-import waitOn from "wait-on";
 
 let mainWindow: BrowserWindow | null = null;
 //let nextProcess: ChildProcess | null = null;
@@ -22,27 +20,38 @@ let mcpProcess: ChildProcess | null = null;
 } */
 
 /** MCP(FastAPI) 서버 실행 */
-function startMCPServer() {
-  mcpProcess = spawn(
-    "python",
-    [
-      "-m",
-      "uvicorn",
-      "mcp_server.main:app",
-      "--host",
-      "127.0.0.1",
-      "--port",
-      "8001",
-      "--reload", // 개발 중만 필요
-    ],
-    {
-      cwd: path.join(__dirname, ".."),
-      shell: true,
-      stdio: "inherit",
-      windowsHide: true,
-    }
-  );
-  console.log(`MCP Server listening on: http://127.0.0.1:8001`);
+function startMCPServer(): ChildProcess {
+  const pythonPath = path.join(
+    __dirname,
+    "..",
+    "venv",
+    "Scripts",
+    "python.exe"
+  ); // 가상환경 python 경로
+
+  const args = [
+    "-m",
+    "uvicorn",
+    "mcp_server.main:app",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8080",
+    "--reload",
+  ];
+
+  const mcpProcess = spawn(pythonPath, args, {
+    cwd: path.join(__dirname, ".."),
+    stdio: "inherit",
+    windowsHide: true,
+    shell: false,
+  });
+
+  mcpProcess.on("error", (err) => {
+    console.error("Failed to start MCP server:", err);
+  });
+
+  return mcpProcess;
 }
 
 /** 프로세스와 자식 프로세스까지 안전하게 종료 */
@@ -73,18 +82,18 @@ ipcMain.handle("run-python", async (_event, code: string) =>
 
 /** 메인 창 생성 및 서버 준비 대기 */
 async function createWindow() {
-  if (isDev) {
+  /* if (isDev) {
     //startNextServer();
-    startMCPServer();
-
+    
     // Next.js dev 서버 준비될 때까지 대기 (최대 5초)
     /* try {
       //await waitOn({ resources: ["http://localhost:8000"], timeout: 2000 });
       console.log("Next.js dev 서버가 준비되었습니다.");
     } catch (err) {
       console.error("wait-on: Next.js dev 서버 대기 실패:", err);
+      } 
     } */
-  }
+  startMCPServer();
 
   mainWindow = new BrowserWindow({
     width: 1280,
