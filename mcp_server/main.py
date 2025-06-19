@@ -19,7 +19,7 @@ class Action(BaseModel):
     open_webbrowser: list[str] = None
 
 class ActionsListPayload(BaseModel):
-    actionsList: list[Action]
+    actions_list: list[Action]
 
 # Local MCP 서버 켜졌는지 확인용 path
 @app.get("/health")
@@ -65,7 +65,7 @@ async def open_webbrowser(code: str) -> str:
 @app.post("/mcp")
 async def mcp(payload: ActionsListPayload):
     results = []
-    for action in payload.actionsList:
+    for action in payload.actions_list:
         if action.execute_programs:
             for program_exe in action.execute_programs:
                 program_path = find_program_path(program_exe)
