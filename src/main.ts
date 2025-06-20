@@ -27,7 +27,7 @@ ipcMain.on("request-from-renderer", async (event, actionsListJson): Promise<void
     // Node.js 내장 fetch(18 이상) 또는 axios, node-fetch 등 사용 가능
     // 예시는 node-fetch 사용 가정
     try {
-        const localMCPServerAddress = "http://127.0.0.1:8002/mcp";
+        const localMCPServerAddress = "http://127.0.0.1:8002/local_actions";
 
         // node-fetch import 필요: npm install node-fetch
         const fetch = (await import("node-fetch")).default;
