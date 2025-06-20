@@ -102,6 +102,7 @@ ipcMain.on("request-from-renderer", async (event, data) => {
     });
 
     const result = await response.json();
+    console.log(result);
 
     // 렌더러로 결과 전송
     event.sender.send("response-from-main", { success: true, data: result });
