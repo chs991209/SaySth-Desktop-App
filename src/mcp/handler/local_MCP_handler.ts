@@ -8,7 +8,9 @@ export function startMCPServer(): ChildProcess {
     const pythonPath: string = path.join(
         __dirname,
         "..",
-        "local_mcp_server",
+        "..",
+        "..",
+        "mcp_server", // 내쪽에선 mcp_server로 잡아야하는 듯
         "venv",
         "Scripts",
         "python.exe"
@@ -27,7 +29,7 @@ export function startMCPServer(): ChildProcess {
     ];
 
     const mcpProcess: ChildProcess = spawn(pythonPath, args, {
-        cwd: path.join(__dirname, "..", "local_mcp_server"),
+        cwd: path.join(__dirname, "..","..", "..", "local_mcp_server"),
         stdio: "inherit",
         windowsHide: true,
         shell: false,

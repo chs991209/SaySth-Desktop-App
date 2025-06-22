@@ -1,11 +1,11 @@
 import logging
+import shutil
+import subprocess
+import webbrowser
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware  # <--- NEW!
 
-import shutil
-import subprocess
-import webbrowser
 
 # ---- Logging Setup ----
 
