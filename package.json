@@ -1,0 +1,57 @@
+{
+  "name": "saysth-desktop-app",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "repository": "https://github.com/chs991209/SaySth-Desktop-App.git",
+  "author": "Choihyunsu",
+  "license": "MIT",
+  "scripts": {
+    "dev:mcp": "python -m uvicorn mcp_server.main:app --reload --host 127.0.0.1 --port 8002",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "dev": "npm run dev:electron",
+    "build:electron": "tsc -p tsconfig.json",
+    "build": "npm run build:electron",
+    "start": "electron ."
+  },
+  "build": {
+    "appId": "com.saysomething.app",
+    "productName": "SaySomething",
+    "files": [
+      "dist/**/*",
+      "mcp_server/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@types/node": "^22.15.30",
+    "@types/wait-on": "^5.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^35.5.1",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^3.0.1",
+    "eslint": "^9.29.0",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1",
+    "wait-on": "^8.0.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "tree-kill": "^1.2.2"
+  }
+}
